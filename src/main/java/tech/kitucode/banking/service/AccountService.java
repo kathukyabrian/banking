@@ -21,6 +21,7 @@ import java.util.Random;
 @Slf4j
 @Service
 public class AccountService {
+    private final Random random = new Random();
     private final AccountRepository accountRepository;
     private final CustomerRepository customerRepository;
     private final ApplicationProperties applicationProperties;
@@ -115,7 +116,6 @@ public class AccountService {
     private String generateIban(String branchCode) {
         String ibanPrefix = applicationProperties.getIbanPrefix() + branchCode;
 
-        Random random = new Random();
         long accountNumber = random.nextLong(1000000000L, 9999999999L);
 
         String iban = ibanPrefix + accountNumber;
