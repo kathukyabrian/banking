@@ -1,0 +1,13 @@
+version: "2.0"
+services:
+  db:
+    image: postgres:17-alpine
+    restart: on-failure
+    environment:
+      POSTGRES_USER: dtb
+      POSTGRES_PASSWORD: dtb2025
+      POSTGRES_DB: banking
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./db_data:/var/lib/postgresql/data
