@@ -12,6 +12,7 @@ import tech.kitucode.banking.error.EntityNotFoundException;
 import tech.kitucode.banking.service.AccountService;
 import tech.kitucode.banking.service.dto.CreateAccountDTO;
 import tech.kitucode.banking.web.util.PaginationUtil;
+import tech.kitucode.banking.web.vm.ErrorResponse;
 
 import java.net.URI;
 import java.util.List;
@@ -33,7 +34,7 @@ public class AccountResource {
 
         Account savedAccount = accountService.save(createAccountDTO);
 
-        return ResponseEntity.created(URI.create("/api/accounts/" + savedAccount.getAccountId())).body(savedAccount);
+        return ResponseEntity.created(URI.create(BASE_URL + "/" + savedAccount.getAccountId())).body(savedAccount);
     }
 
     @GetMapping("/accounts")
@@ -64,12 +65,10 @@ public class AccountResource {
     }
 
     @PutMapping("/accounts")
-    public ResponseEntity<Account> update(@RequestBody Account account) {
+    public ResponseEntity<ErrorResponse> update(@RequestBody Account account) {
         log.info("REST request to update account : {}", account);
-
-        Account updatedAccount = accountService.update(account);
-
-        return ResponseEntity.ok(updatedAccount);
+        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.NOT_IMPLEMENTED.value(), "Nothing to update");
+        return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(errorResponse);
     }
 
     @DeleteMapping("/accounts/{id}")
