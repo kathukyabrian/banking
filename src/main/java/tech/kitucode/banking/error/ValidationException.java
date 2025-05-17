@@ -1,6 +1,6 @@
 package tech.kitucode.banking.error;
 
-public class ValidationException extends RuntimeException{
+public class ValidationException extends RuntimeException {
     public ValidationException() {
     }
 

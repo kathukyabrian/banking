@@ -1,6 +1,6 @@
 package tech.kitucode.banking.error;
 
-public class EntityNotFoundException extends RuntimeException{
+public class EntityNotFoundException extends RuntimeException {
     public EntityNotFoundException() {
     }
 

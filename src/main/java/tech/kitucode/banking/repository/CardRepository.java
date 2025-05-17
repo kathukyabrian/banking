@@ -8,6 +8,7 @@ import java.util.Optional;
 
 public interface CardRepository extends JpaRepository<Card, Long> {
     Optional<Card> findOneByPan(String pan);
+
     Optional<Card> findOneByCardTypeAndAccountId(CardType cardType, Long accountId);
 
     Integer countByAccountId(Long accountId);
