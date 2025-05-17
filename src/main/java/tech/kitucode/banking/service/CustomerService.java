@@ -32,8 +32,28 @@ public class CustomerService {
         return customerRepository.save(customer);
     }
 
-    public Page<Customer> findAll(String firstName, String lastName, String otherName, LocalDate startDate, LocalDate endDate, Pageable pageable) {
-        log.debug("Request to find customers with firstName: {}, lastName: {}, otherName: {}, startDate: {}, endDate: {}", firstName, lastName, otherName, startDate, endDate);
+    public Page<Customer> findAll(String name, LocalDate startDate, LocalDate endDate, Pageable pageable) {
+        String firstName = null;
+        String lastName = null;
+        String otherName = null;
+        String[] nameArray = name.split(" ");
+        int length = nameArray.length;
+        if (length == 1) {
+            firstName = nameArray[0];
+        }
+
+        if (length == 2) {
+            firstName = nameArray[0];
+            lastName = nameArray[1];
+        }
+
+        if (length == 3) {
+            firstName = nameArray[0];
+            lastName = nameArray[1];
+            otherName = nameArray[2];
+        }
+
+        log.info("Request to find customers with firstName: {}, lastName: {}, otherName: {}, startDate: {}, endDate: {}", firstName, lastName, otherName, startDate, endDate);
 
         Specification<Customer> customerSpecification = createSpecification(firstName, lastName, otherName, startDate, endDate);
 

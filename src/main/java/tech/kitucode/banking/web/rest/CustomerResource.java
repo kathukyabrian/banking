@@ -36,14 +36,12 @@ public class CustomerResource {
 
     @GetMapping("/customers")
     public ResponseEntity<List<Customer>> findAll(
-            @RequestParam(name = "firstName", required = false) String firstName,
-            @RequestParam(name = "lastName", required = false) String lastName,
-            @RequestParam(name = "otherName", required = false) String otherName,
+            @RequestParam(name = "name", required = false) String name,
             @RequestParam(name = "startDate", required = false) LocalDate startDate,
             @RequestParam(name = "endDate", required = false) LocalDate endDate,
             Pageable pageable) {
         log.info("REST request to find all customers");
-        Page<Customer> page = customerService.findAll(firstName, lastName, otherName, startDate, endDate, pageable);
+        Page<Customer> page = customerService.findAll(name, startDate, endDate, pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, BASE_URL);
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
