@@ -6,6 +6,7 @@ import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import tech.kitucode.banking.ApplicationProperties;
 import tech.kitucode.banking.domain.Card;
 import tech.kitucode.banking.domain.enumerations.CardType;
 import tech.kitucode.banking.error.ValidationException;
@@ -20,11 +21,13 @@ import java.util.Random;
 @Slf4j
 @Service
 public class CardService {
-    private final CardRepository cardRepository;
     private final Random random = new Random();
+    private final CardRepository cardRepository;
+    private final ApplicationProperties applicationProperties;
 
-    public CardService(CardRepository cardRepository) {
+    public CardService(CardRepository cardRepository, ApplicationProperties applicationProperties) {
         this.cardRepository = cardRepository;
+        this.applicationProperties = applicationProperties;
     }
 
     public Card save(CreateCardDTO createCardDTO) {
@@ -38,9 +41,9 @@ public class CardService {
         }
 
         // proceed to create card
-        Long cardsByAccountCount = cardRepository.countByAccountId(createCardDTO.getAccountId());
-        if (cardsByAccountCount == 2) {
-            throw new ValidationException("A maximum of 2 accounts is allowed for each account.");
+        Integer cardsByAccountCount = cardRepository.countByAccountId(createCardDTO.getAccountId());
+        if (cardsByAccountCount.equals(applicationProperties.getMaxCardsPerAccount())) {
+            throw new ValidationException("A maximum of " + applicationProperties.getMaxCardsPerAccount() + " accounts is allowed for each account.");
         }
 
         Card card = new Card();

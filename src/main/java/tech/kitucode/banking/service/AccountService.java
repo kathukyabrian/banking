@@ -6,6 +6,7 @@ import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import tech.kitucode.banking.ApplicationProperties;
 import tech.kitucode.banking.domain.Account;
 import tech.kitucode.banking.domain.Customer;
 import tech.kitucode.banking.error.ValidationException;
@@ -22,10 +23,12 @@ import java.util.Random;
 public class AccountService {
     private final AccountRepository accountRepository;
     private final CustomerRepository customerRepository;
+    private final ApplicationProperties applicationProperties;
 
-    public AccountService(AccountRepository accountRepository, CustomerRepository customerRepository) {
+    public AccountService(AccountRepository accountRepository, CustomerRepository customerRepository, ApplicationProperties applicationProperties) {
         this.accountRepository = accountRepository;
         this.customerRepository = customerRepository;
+        this.applicationProperties = applicationProperties;
     }
 
     public Account save(CreateAccountDTO createAccountDTO) {
@@ -106,11 +109,11 @@ public class AccountService {
     }
 
     private String generateBicSwift(String branchCode) {
-        return "DTKEKENA" + branchCode;
+        return applicationProperties.getIbanPrefix() + branchCode;
     }
 
     private String generateIban(String branchCode) {
-        String ibanPrefix = "DTKEKENA" + branchCode;
+        String ibanPrefix = applicationProperties.getIbanPrefix() + branchCode;
 
         Random random = new Random();
         long accountNumber = random.nextLong(1000000000L, 9999999999L);
