@@ -8,9 +8,11 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.*;
 import tech.kitucode.banking.ApplicationProperties;
+import tech.kitucode.banking.domain.Account;
 import tech.kitucode.banking.domain.Card;
 import tech.kitucode.banking.domain.enumerations.CardType;
 import tech.kitucode.banking.error.ValidationException;
+import tech.kitucode.banking.repository.AccountRepository;
 import tech.kitucode.banking.repository.CardRepository;
 import tech.kitucode.banking.service.dto.CreateCardDTO;
 import tech.kitucode.banking.service.dto.UpdateCardDTO;
@@ -29,6 +31,9 @@ public class CardServiceTest {
 
     @Mock
     private CardRepository cardRepository;
+
+    @Mock
+    private AccountRepository accountRepository;
 
     @Mock
     private ApplicationProperties applicationProperties;
@@ -65,6 +70,20 @@ public class CardServiceTest {
             cardService.save(withoutCardAlias);
         });
     }
+    
+    @Test
+    void testCreateCardWithNonExistentAccount() {
+        CreateCardDTO createCardDTO = new CreateCardDTO();
+        createCardDTO.setCardType(CardType.VIRTUAL);
+        createCardDTO.setAccountId(1L);
+        createCardDTO.setCardAlias("Brian Kitunda Kathukya");
+
+        when(accountRepository.findById(createCardDTO.getAccountId())).thenReturn(Optional.empty());
+
+        assertThrows(ValidationException.class, () -> {
+            cardService.save(createCardDTO);
+        });
+    }
 
     @Test
     void testCardExistsByAccountIdAndCardType() {
@@ -82,6 +101,11 @@ public class CardServiceTest {
         when(cardRepository.findOneByCardTypeAndAccountId(createCardDTO.getCardType(), createCardDTO.getAccountId()))
                 .thenReturn(Optional.of(cardByTypeAndAccountId));
 
+        Account account = new Account();
+        account.setAccountId(1L);
+        account.setCustomerId(1L);
+        when(accountRepository.findById(1L)).thenReturn(Optional.of(account));
+
         assertThrows(ValidationException.class, () -> {
             cardService.save(createCardDTO);
         });
@@ -93,6 +117,11 @@ public class CardServiceTest {
         createCardDTO.setCardType(CardType.VIRTUAL);
         createCardDTO.setAccountId(1L);
         createCardDTO.setCardAlias("Brian Kitunda Kathukya");
+
+        Account account = new Account();
+        account.setAccountId(1L);
+        account.setCustomerId(1L);
+        when(accountRepository.findById(1L)).thenReturn(Optional.of(account));
 
         when(applicationProperties.getMaxCardsPerAccount()).thenReturn(2);
         when(cardRepository.countByAccountId(createCardDTO.getAccountId())).thenReturn(2);

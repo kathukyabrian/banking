@@ -7,9 +7,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import tech.kitucode.banking.ApplicationProperties;
+import tech.kitucode.banking.domain.Account;
 import tech.kitucode.banking.domain.Card;
 import tech.kitucode.banking.domain.enumerations.CardType;
 import tech.kitucode.banking.error.ValidationException;
+import tech.kitucode.banking.repository.AccountRepository;
 import tech.kitucode.banking.repository.CardRepository;
 import tech.kitucode.banking.service.dto.CreateCardDTO;
 import tech.kitucode.banking.service.dto.UpdateCardDTO;
@@ -23,10 +25,12 @@ import java.util.Random;
 public class CardService {
     private final Random random = new Random();
     private final CardRepository cardRepository;
+    private final AccountRepository accountRepository;
     private final ApplicationProperties applicationProperties;
 
-    public CardService(CardRepository cardRepository, ApplicationProperties applicationProperties) {
+    public CardService(CardRepository cardRepository, AccountRepository accountRepository, ApplicationProperties applicationProperties) {
         this.cardRepository = cardRepository;
+        this.accountRepository = accountRepository;
         this.applicationProperties = applicationProperties;
     }
 
@@ -34,6 +38,11 @@ public class CardService {
         log.debug("Request to create card : {}", createCardDTO);
 
         validateCardCreationRequest(createCardDTO);
+
+        Account account = accountRepository.findById(createCardDTO.getAccountId()).orElse(null);
+        if(account == null){
+            throw new ValidationException("Account with id " + createCardDTO.getAccountId() + " does not exist");
+        }
 
         Optional<Card> cardByCardTypeAndAccountId = cardRepository.findOneByCardTypeAndAccountId(createCardDTO.getCardType(), createCardDTO.getAccountId());
         if (cardByCardTypeAndAccountId.isPresent()) {

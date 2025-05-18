@@ -30,4 +30,3 @@ mvn test
 # Swagger 
 - The API docs can be found on this url after running the project
 ```http://localhost:8080/swagger-ui.html```
-- 
