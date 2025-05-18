@@ -55,6 +55,12 @@ public class CardService {
         card.setCvv(generateCVV());
         card.setCreatedOn(LocalDate.now());
 
+        return save(card);
+    }
+
+    public Card save(Card card) {
+        log.debug("Request to save card: {}", card);
+
         return maskCardDetails(cardRepository.save(card));
     }
 

@@ -48,6 +48,12 @@ public class AccountService {
         account.setIban(generateIban(createAccountDTO.getBranchCode()));
         account.setCreatedOn(LocalDate.now());
 
+        return save(account);
+    }
+
+    public Account save(Account account) {
+        log.debug("Request to save account : {}", account);
+
         return accountRepository.save(account);
     }
 
